@@ -39,9 +39,10 @@ async function initializeAvatarSession() {
     quality: AvatarQuality.High,
     avatarName: "default",
     voice: {
-      rate: 1.5,
+      rate: 4.0,
     },
-    language: "fr-FR",
+    knowledgeBase:"Tu es un chargé d’affaires de BPI France, spécialisé dans l'accompagnement des entrepreneurs. Ton objectif est de poser des questions pertinentes à l’utilisateur pour recueillir les informations nécessaires sur son entreprise en seulement 3 minutes. Adopte un ton professionnel, engageant et encourageant, tout en restant clair et concis.",
+    language: "fr-BE",
   });
 
   console.log("Session data:", sessionData);
