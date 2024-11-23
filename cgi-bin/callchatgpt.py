@@ -5,6 +5,8 @@ import json
 from dotenv import load_dotenv
 from langchain_openai import OpenAI  # type: ignore
 from httpx import Client, AsyncClient
+import sys
+import urllib.parse
 
 load_dotenv()
 LLM_KEY = os.getenv("LLM_KEY")
@@ -80,6 +82,23 @@ def extract_information(data):
     """
 
     response = llm.invoke(prompt)
+    response = """{
+    "entrepreneur": {
+        "nom": "Jean Dupont",
+        "age": 45,
+        "intention": "Création",
+        "expertise": "Technologie de l'information",
+        "biographie": "Jean est un entrepreneur innovant dans le secteur des logiciels."
+    },
+    "entreprise": {
+        "nom": "TechVision",
+        "secteur": "Logiciels d'entreprise",
+        "status": "Active",
+        "fondation": 2010,
+        "description": "TechVision développe des solutions logicielles pour les entreprises modernes."
+    }
+}"""
+
     print(response)
     try:
         return json.loads(response)
@@ -107,12 +126,16 @@ def handle_transcript():
             print(f"Champ '{field}': {value}")
 
 
-def handle_cgi_request():
-    # Parse CGI form data
-    form = cgi.FieldStorage()
-
-    # Get the 'data' field from the form
-    data = form.getvalue('data')
+"""def handle_cgi_request():
+    # Read the POST data directly from stdin
+    content_length = int(os.environ.get('CONTENT_LENGTH', 0))
+    post_data = sys.stdin.read(content_length)
+    
+    # Parse the form data
+    form = urllib.parse.parse_qs(post_data)
+    
+    # Get the 'data' field from the parsed form
+    data = form.get('data', [None])[0]
 
     if not data:
         print("Content-Type: application/json\n")
@@ -128,6 +151,26 @@ def handle_cgi_request():
 
     # Send the extracted data back to the client
     print("Content-Type: application/json\n")
-    print(json.dumps(extracted_data))
+    print(json.dumps(extracted_data))"""
+    
+
+def handle_cgi_request():
+    # Log the environment variables for debugging
+    print("Content-Type: application/json\n")
+    print(json.dumps({"env": dict(os.environ), "message": "Debugging environment"}))
+    
+    # Read POST data
+    content_length = int(os.environ.get('CONTENT_LENGTH', 0))
+    if content_length == 0:
+        print(json.dumps({"error": "CONTENT_LENGTH is 0"}))
+        return
+
+    post_data = sys.stdin.read(content_length)
+    
+    # Debug raw POST data
+    print("Content-Type: application/json\n")
+    print(json.dumps({"post_data": post_data}))
+    return
+
 
 handle_cgi_request()
