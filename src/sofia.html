@@ -13,13 +13,11 @@
 	</div>
 </body>
 <script>
-	import { callChatGPT } from '../public/script/request.js';
-	
 	(function (window) {
 		const host = "https://labs.heygen.com";
 		const url =
 			host +
-			"/guest/streaming-embed?share=eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJlZjA4MDM5YTQxMzU0ZWQ1YTIwNTY1ZGI4%0D%0AOTkzNzNmMyIsInByZXZpZXdJbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3Yz%0D%0AL2VmMDgwMzlhNDEzNTRlZDVhMjA1NjVkYjg5OTM3M2YzL2Z1bGwvMi4yL3ByZXZpZXdfdGFyZ2V0%0D%0ALndlYnAiLCJuZWVkUmVtb3ZlQmFja2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6IjM1%0D%0AM2EzMDRhZDNlZjQ1NmZiNzk1ZWY0MDkyZDgyMjZlIiwidXNlcm5hbWUiOiI3MjQ5ZmU0MTdiNGQ0%0D%0AODM3ODVkMmZlNmQ2MzBhYjdiZCJ9&inIFrame=1";
+			"/guest/streaming-embed?share=eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJlZjA4MDM5YTQxMzU0ZWQ1YTIwNTY1ZGI4%0D%0AOTkzNzNmMyIsInByZXZpZXdJbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3Yz%0D%0AL2VmMDgwMzlhNDEzNTRlZDVhMjA1NjVkYjg5OTM3M2YzL2Z1bGwvMi4yL3ByZXZpZXdfdGFyZ2V0%0D%0ALndlYnAiLCJuZWVkUmVtb3ZlQmFja2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6IjQ5%0D%0ANzZjMjBhZTM5YjQ1MGU5NWQ5MWZiMmY2M2NlNTkxIiwidXNlcm5hbWUiOiJmYjcyNmRiODM0MzY0%0D%0ANzRkYmE4MDE1OGMxZTkxOGJiOCJ9&inIFrame=1";
 
 			// Initialize SpeechRecognition
 			let recognition;
@@ -113,13 +111,13 @@
 						const cleanedTranscript = fullTranscript.trim(); // Remove trailing spaces
 						localStorage.setItem("data", JSON.stringify(cleanedTranscript));
 						wrapDiv.classList.toggle("expand", visible);
-						sendPrompt();
+						sendPrompt(cleanedTranscript);
 						break;
 				}
 			}
 		});
 
-		async function sendPrompt() {
+		async function sendPrompt(transcript) {
 			const prompt = `Voici une discussion longue et non structurée entre un chargé d'affaires BPI nommé Sofia et un entrepreneur. Cette discussion contient des informations importantes sur le profil de l'entrepreneur et son entreprise. Ignore les informations superflues, répétées ou non pertinentes, et extrais uniquement les informations nécessaires pour compléter les champs suivants dans un fichier JSON structuré.
 				Le JSON doit être divisé en deux blocs :
 				1. "entrepreneur" : Inclure uniquement les données pertinentes au profil personnel de l'entrepreneur.
@@ -145,18 +143,26 @@
 				Si une information n’est pas disponible ou déductible, laisse le champ vide ou ne l’inclus pas dans la réponse.
 
 				Texte de la discussion :
-				` + data;
-
-			const data = await callChatGPT(prompt);
-			if (data) {
+				` + transcript;
+			const data = {
+				promptInput: prompt
+			}
+			const options = {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				body: JSON.stringify(data)
+			}
+			const res = await fetch("/run-chatgpt", options);
+			if (res) {
 				// Save to localStorage for the result page
-				localStorage.setItem("chatGPTResult", JSON.stringify(data));
-				window.location.href = "result.html"; // Redirect to result page
+				sessionStorage.setItem("chatGPTResult", JSON.stringify(res));
+				window.location.href = "/result"; // Redirect to result page
 			} else {
-				alert("Failed to fetch data from ChatGPT");
+				console.error("error!");
 			}
 		}
-
 
 		// Handle speech recognition results
 		recognition.onresult = function(event) {
