@@ -45,7 +45,7 @@ div.chat p.bubble {
 	font-family: Arial, sans-serif;
 	font-size: 14px;
 	line-height: 1.4;
-	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); Optional shadow
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .chat .logo {

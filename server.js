@@ -35,13 +35,14 @@ app.get("/", (req, res) => {
 	res.sendFile(path.join(__dirname, "src", "index.html"));
 });
 
-app.get("/entretien", (req, res) => {
-	res.sendFile(path.join(__dirname, "src", "entretien.html"));
+app.get("/sofia", (req, res) => {
+	res.sendFile(path.join(__dirname, "src", "sofia.html"));
 });
 
 app.get("/result", (req, res) => {
 	res.sendFile(path.join(__dirname, "src", "result.html"));
 });
+
 
 // Start the server
 app.listen(PORT, () => {

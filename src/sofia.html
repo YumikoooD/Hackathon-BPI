@@ -13,6 +13,8 @@
 	</div>
 </body>
 <script>
+	import { callChatGPT } from '../public/script/request.js';
+	
 	(function (window) {
 		const host = "https://labs.heygen.com";
 		const url =
@@ -111,48 +113,50 @@
 						const cleanedTranscript = fullTranscript.trim(); // Remove trailing spaces
 						localStorage.setItem("data", JSON.stringify(cleanedTranscript));
 						wrapDiv.classList.toggle("expand", visible);
-						callCGIScriptAndRedirect(cleanedTranscript, "/result");
+						sendPrompt();
 						break;
 				}
 			}
 		});
 
-		async function callPythonScript(transcript) {
-			try {
-				await fetch("/run-python");
-				window.location.href = '/result';
-			} catch {
-				console.error("error: cannot execute python script");
+		async function sendPrompt() {
+			const prompt = `Voici une discussion longue et non structurée entre un chargé d'affaires BPI nommé Sofia et un entrepreneur. Cette discussion contient des informations importantes sur le profil de l'entrepreneur et son entreprise. Ignore les informations superflues, répétées ou non pertinentes, et extrais uniquement les informations nécessaires pour compléter les champs suivants dans un fichier JSON structuré.
+				Le JSON doit être divisé en deux blocs :
+				1. "entrepreneur" : Inclure uniquement les données pertinentes au profil personnel de l'entrepreneur.
+				2. "entreprise" : Inclure uniquement les données pertinentes à l'entreprise.
+
+				Les champs à extraire doivent inclure (mais ne sont pas limités à) :
+				- **Pour le bloc "entrepreneur"** :
+				- "nom" : Nom complet de l'entrepreneur.
+				- "age" : Âge de l'entrepreneur (si mentionné ou déductible).
+				- "intention" : Intention de l'entrepreneur (ex. gestion, création, cession, reprise, etc.).
+				- "expertise" : Expertise ou secteur de compétence de l'entrepreneur.
+				- "biographie" : Une brève description de l'entrepreneur, basée sur les informations données.
+
+				- **Pour le bloc "entreprise"** :
+				- "nom" : Nom de l'entreprise.
+				- "secteur" : Secteur d'activité principal de l'entreprise.
+				- "status" : Statut actuel de l'entreprise (par ex. active, en démarrage, en cessation, etc.).
+				- "fondation" : Année de fondation de l'entreprise (si mentionnée).
+				- "description" : Une brève description de l'entreprise, ses activités principales ou sa mission.
+
+				Fournis le résultat final sous forme de JSON structuré, trié par ordre d'importance :
+
+				Si une information n’est pas disponible ou déductible, laisse le champ vide ou ne l’inclus pas dans la réponse.
+
+				Texte de la discussion :
+				` + data;
+
+			const data = await callChatGPT(prompt);
+			if (data) {
+				// Save to localStorage for the result page
+				localStorage.setItem("chatGPTResult", JSON.stringify(data));
+				window.location.href = "result.html"; // Redirect to result page
+			} else {
+				alert("Failed to fetch data from ChatGPT");
 			}
 		}
 
-		async function callCGIScriptAndRedirect(data, redirectUrl) {
-			try {
-				// URL of the CGI script
-				const cgiUrl = "./cgi-bin/callchatgpt.py";
-
-				// Send data to the CGI script using fetch
-				const response = await fetch(cgiUrl, {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/x-www-form-urlencoded",
-					},
-					body: new URLSearchParams({
-						data: JSON.stringify(data),
-					}),
-				});
-
-				// Await the response to ensure the CGI script has finished processing
-				if (!response.ok) {
-					console.error(`CGI script returned an error: ${response.status}`);
-				}
-
-				// Redirect to the new page
-				window.location.href = redirectUrl;
-			} catch (error) {
-				console.error("Error while communicating with the CGI script:", error);
-			}
-		}
 
 		// Handle speech recognition results
 		recognition.onresult = function(event) {
