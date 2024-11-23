@@ -22,6 +22,8 @@ div.video {
 }
 
 div.chat {
+	justify-content: space-between;
+	align-items: center;
 	width: 50%; /* Half the viewport width */
 	height: 100%;
 	position: fixed; /* Keep it fixed on the screen */
@@ -29,20 +31,18 @@ div.chat {
 	right: 0; /* Align to the right edge */
 }
 
-div.chat .left-msg {
-	color: black;
-	background-color: yellow;
-	border-radius: 20%;
-	padding: 10px;
-	left: 0;
-}
-
-div.chat .right-msg {
-	color: black;
-	background-color: var(--background-light);
-	border-radius: 20%;
-	padding: 10px;
-	right: 0;
+div.chat p.bubble {
+	margin: auto;
+	max-width: 300px;
+	padding: 10px 15px;
+	background-color: #273a4a; /* Light blue background */
+	color: white; /* Text color */
+	border-radius: 15px; /* Rounded edges */
+	position: relative; /* For the "tail" */
+	font-family: Arial, sans-serif;
+	font-size: 14px;
+	line-height: 1.4;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional shadow */
 }
 
 .chat .logo {
