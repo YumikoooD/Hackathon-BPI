@@ -34,17 +34,18 @@ div.chat {
 }
 
 div.chat p.bubble {
-	margin: auto;
+	margin: 0 auto;
+	position: relative;
+	top: 100px; 
 	max-width: 300px;
 	padding: 10px 15px;
 	background-color: #273a4a; /* Light blue background */
 	color: white; /* Text color */
 	border-radius: 15px; /* Rounded edges */
-	position: relative; /* For the "tail" */
 	font-family: Arial, sans-serif;
 	font-size: 14px;
 	line-height: 1.4;
-	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional shadow */
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); Optional shadow
 }
 
 .chat .logo {
