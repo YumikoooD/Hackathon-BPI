@@ -85,12 +85,17 @@ a { text-decoration: none !important ;
     padding-left: 5vw;
     padding-right: 5vw;
     min-height: 300px;
+    background-image: url("../assets/gear_background.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 #sec #title{
     font-size: 3vw;
     text-align: center;
-    margin: 75px auto 2vw;
+    margin: 0px auto 2vw;
+    padding-top: 50px;
     font-weight: 500;
 }
 
@@ -127,8 +132,7 @@ a { text-decoration: none !important ;
     width: 40%;
     height: auto;
     border-radius: 30px;
-    opacity: 0;
-    transition: opacity 230ms cubic-bezier(0.1, 0.7, 1.0, 0.1);
+    /* box-shadow: 12px 12px 2px 1px rgba(189, 189, 189, 0.667); */
 }
 
 #sec #img img:hover{
@@ -234,4 +238,13 @@ a { text-decoration: none !important ;
 }
 
 #sec2 .carte .text{
+}
+
+.hidden {
+    opacity: 0;
+    transition: all 1s;
+}
+
+.show {
+    opacity: 1;
 }
