@@ -13,20 +13,19 @@ const data = {
 	}
 };
 
-// Injecter les données directement
-const entrepreneurDiv = document.getElementById('entrepreneur');
-const entrepriseDiv = document.getElementById('entreprise');
+// Generic function to parse and display JSON data
+function parseAndDisplayData(data, containerId) {
+	const container = document.getElementById(containerId);
+	container.innerHTML = Object.keys(data)
+		.map(key => `<p><strong>${capitalizeFirstLetter(key)} :</strong> ${data[key]}</p>`)
+		.join('');
+}
 
-entrepreneurDiv.innerHTML = `
-	<p><strong>Nom :</strong> ${data.entrepreneur.nom}</p>
-	<p><strong>Âge :</strong> ${data.entrepreneur.age}</p>
-	<p><strong>Expertise :</strong> ${data.entrepreneur.expertise}</p>
-	<p><strong>Biographie :</strong> ${data.entrepreneur.biographie}</p>
-`;
+// Helper function to capitalize the first letter of a string
+function capitalizeFirstLetter(string) {
+	return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
-entrepriseDiv.innerHTML = `
-	<p><strong>Nom :</strong> ${data.entreprise.nom}</p>
-	<p><strong>Secteur :</strong> ${data.entreprise.secteur}</p>
-	<p><strong>Fondation :</strong> ${data.entreprise.fondation}</p>
-	<p><strong>Description :</strong> ${data.entreprise.description}</p>
-`;
+// Parse and display data for entrepreneur and entreprise
+parseAndDisplayData(data.entrepreneur, 'entrepreneur');
+parseAndDisplayData(data.entreprise, 'entreprise');
