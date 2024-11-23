@@ -107,24 +107,13 @@
 					case "hide":
 						visible = false;
 						recognition.stop();
-						// Store the full transcript in localStorage
-						const cleanedTranscript = fullTranscript.trim(); // Remove trailing spaces
-						localStorage.setItem("data", JSON.stringify(cleanedTranscript));
+						const cleanedTranscript = fullTranscript.trim();
 						wrapDiv.classList.toggle("expand", visible);
 						callCGIScriptAndRedirect(cleanedTranscript, "/result");
 						break;
 				}
 			}
 		});
-
-		async function callPythonScript(transcript) {
-			try {
-				await fetch("/run-python");
-				window.location.href = '/result';
-			} catch {
-				console.error("error: cannot execute python script");
-			}
-		}
 
 		async function callCGIScriptAndRedirect(data, redirectUrl) {
 			try {
