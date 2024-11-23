@@ -14,7 +14,7 @@ const FILE_URL =
 // You can also transcribe a local file by passing in a file path
 // const FILE_URL = './path/to/file.mp3';
 
-// Request parameters 
+// Request parameters
 const data = {
   audio: FILE_URL
 }
