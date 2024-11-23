@@ -12,7 +12,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Route to handle /run-python
 app.get("/run-python", (req, res) => {
   // Command to run a Python script
-  const pythonScript = "python3 ./transcript/callchatgpt.py"; // Replace 'script.py' with your Python script path
+  const pythonScript = "python3 ./cgi-bin/callchatgpt.py"; // Replace 'script.py' with your Python script path
 
   exec(pythonScript, (error, stdout, stderr) => {
     if (error) {
