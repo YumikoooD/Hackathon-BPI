@@ -19,7 +19,7 @@ llm = OpenAI(
 )
 
 def extract_information(data):
-    prompt = f"""
+    '''prompt = f"""
     Voici un texte non structuré contenant plusieurs informations :
     {data}
 
@@ -29,7 +29,55 @@ def extract_information(data):
     - Status de l'entreprise : Status de l'entreprise.
 
     Fournis une réponse sous forme de JSON, avec un champ correspondant à chaque clé demandée.
+    """'''
+    
+    prompt = f"""Voici une discussion longue et non structurée entre un chargé d'affaires BPI nommé Sofia et un entrepreneur. Cette discussion contient des informations importantes sur le profil de l'entrepreneur et son entreprise. Ignore les informations superflues, répétées ou non pertinentes, et extrais uniquement les informations nécessaires pour compléter les champs suivants dans un fichier JSON structuré.
+
+    Le JSON doit être divisé en deux blocs : 
+    1. `entrepreneur` : Inclure uniquement les données pertinentes au profil personnel de l'entrepreneur.
+    2. `entreprise` : Inclure uniquement les données pertinentes à l'entreprise.
+
+    Les champs à extraire doivent inclure (mais ne sont pas limités à) :
+    - **Pour le bloc `entrepreneur`** :
+    - `nom` : Nom complet de l'entrepreneur.
+    - `age` : Âge de l'entrepreneur (si mentionné ou déductible).
+    - `intention` : Intention de l'entrepreneur (ex. gestion, création, cession, reprise, etc.).
+    - `expertise` : Expertise ou secteur de compétence de l'entrepreneur.
+    - `biographie` : Une brève description de l'entrepreneur, basée sur les informations données.
+    
+    - **Pour le bloc `entreprise`** :
+    - `nom` : Nom de l'entreprise.
+    - `secteur` : Secteur d'activité principal de l'entreprise.
+    - `status` : Statut actuel de l'entreprise (par ex. active, en démarrage, en cessation, etc.).
+    - `fondation` : Année de fondation de l'entreprise (si mentionnée).
+    - `description` : Une brève description de l'entreprise, ses activités principales ou sa mission.
+
+    Fournis le résultat final sous forme de JSON structuré, trié par ordre d'importance :
+
+    Exemple attendu :
+    {
+    "entrepreneur": {
+        "nom": "Jean Dupont",
+        "age": 45,
+        "intention": "Création",
+        "expertise": "Technologie de l'information",
+        "biographie": "Jean est un entrepreneur innovant dans le secteur des logiciels."
+    },
+    "entreprise": {
+        "nom": "TechVision",
+        "secteur": "Logiciels d'entreprise",
+        "status": "Active",
+        "fondation": 2010,
+        "description": "TechVision développe des solutions logicielles pour les entreprises modernes."
+    }
+    }
+
+    Si une information n’est pas disponible ou déductible, laisse le champ vide ou ne l’inclus pas dans la réponse.
+
+    Texte de la discussion :
+    {data}
     """
+    
     response = llm.invoke(prompt)
     try:
         return json.loads(response)
