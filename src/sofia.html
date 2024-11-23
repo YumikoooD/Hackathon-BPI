@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="./assets/icon.png" rel="icon" type="image/x-icon">
+	<link href="/css/sofia.css" rel="stylesheet">
+	<title>Entretien</title>
+</head>
+<body>
+	<div id="video" class="video"></div>
+	<div id="chat" class="chat">
+	</div>
+</body>
+<script>
+	(function (window) {
+		const host = "https://labs.heygen.com";
+		const url =
+			host +
+			"/guest/streaming-embed?share=eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJlZjA4MDM5YTQxMzU0ZWQ1YTIwNTY1ZGI4%0D%0AOTkzNzNmMyIsInByZXZpZXdJbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3Yz%0D%0AL2VmMDgwMzlhNDEzNTRlZDVhMjA1NjVkYjg5OTM3M2YzL2Z1bGwvMi4yL3ByZXZpZXdfdGFyZ2V0%0D%0ALndlYnAiLCJuZWVkUmVtb3ZlQmFja2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6IjM1%0D%0AM2EzMDRhZDNlZjQ1NmZiNzk1ZWY0MDkyZDgyMjZlIiwidXNlcm5hbWUiOiI3MjQ5ZmU0MTdiNGQ0%0D%0AODM3ODVkMmZlNmQ2MzBhYjdiZCJ9&inIFrame=1";
+
+			// Initialize SpeechRecognition
+			let recognition;
+		if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+			recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+			recognition.continuous = true;
+			recognition.interimResults = true;
+			recognition.lang = 'fr-FR';
+		} else {
+			alert("Speech Recognition API is not supported in your browser.");
+			return ;
+		}
+
+		const clientWidth = document.body.clientWidth;
+
+		// Create the main wrapper div
+		const wrapDiv = document.createElement("div");
+		wrapDiv.id = "heygen-streaming-embed";
+
+		// Create the container for the iframe
+		const container = document.createElement("div");
+		container.id = "heygen-streaming-container";
+
+		// Add custom styles
+		const stylesheet = document.createElement("style");
+		stylesheet.innerHTML = `
+			#heygen-streaming-embed {
+				margin: 100px auto;
+				width: 80%;
+				height: 80%;
+				border-radius: 5%;
+				border: none;
+				box-shadow: none;
+				transition: all linear 0.1s;
+				overflow: hidden;
+				opacity: 1;
+				visibility: visible;
+			}
+
+			#heygen-streaming-embed.show {
+				opacity: 1;
+				visibility: visible;
+			}
+
+			#heygen-streaming-embed.expand {
+				width: 40vw;
+				height: 80vh;
+			}
+
+			#heygen-streaming-container {
+				width: 100%;
+				height: 100%;
+			}
+
+			#heygen-streaming-container iframe {
+				width: 100%;
+				height: 100%;
+				border: 0;
+			}
+		`;
+
+		// Create the iframe element
+		const iframe = document.createElement("iframe");
+		iframe.allowFullscreen = false;
+		iframe.title = "Streaming Embed";
+		iframe.role = "dialog";
+		iframe.allow = "microphone";
+		iframe.src = url;
+
+		let visible = false;
+		let initial = false;
+
+		// Listen for messages from the iframe
+		let fullTranscript = "";
+		window.addEventListener("message", (e) => {
+			if (e.origin === host && e.data && e.data.type === "streaming-embed") {
+				switch (e.data.action) {
+					case "init":
+						initial = true;
+						wrapDiv.classList.toggle("show", initial);
+						break;
+					case "show":
+						visible = true;
+						recognition.start();
+						wrapDiv.classList.toggle("expand", visible);
+						break;
+					case "hide":
+						visible = false;
+						recognition.stop();
+						// Store the full transcript in localStorage
+						const cleanedTranscript = fullTranscript.trim(); // Remove trailing spaces
+						localStorage.setItem("data", JSON.stringify(cleanedTranscript));
+						wrapDiv.classList.toggle("expand", visible);
+						callCGIScriptAndRedirect(cleanedTranscript, "/result");
+						break;
+				}
+			}
+		});
+
+		async function callPythonScript(transcript) {
+			try {
+				await fetch("/run-python");
+				window.location.href = '/result';
+			} catch {
+				console.error("error: cannot execute python script");
+			}
+		}
+
+		async function callCGIScriptAndRedirect(data, redirectUrl) {
+			try {
+				// URL of the CGI script
+				const cgiUrl = "./cgi-bin/callchatgpt.py";
+
+				// Send data to the CGI script using fetch
+				const response = await fetch(cgiUrl, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/x-www-form-urlencoded",
+					},
+					body: new URLSearchParams({
+						data: JSON.stringify(data),
+					}),
+				});
+
+				// Await the response to ensure the CGI script has finished processing
+				if (!response.ok) {
+					console.error(`CGI script returned an error: ${response.status}`);
+				}
+
+				// Redirect to the new page
+				window.location.href = redirectUrl;
+			} catch (error) {
+				console.error("Error while communicating with the CGI script:", error);
+			}
+		}
+
+		// Handle speech recognition results
+		recognition.onresult = function(event) {
+			let finalTranscript = '';
+
+			for (let i = event.resultIndex; i < event.results.length; i++) {
+				if (event.results[i].isFinal)
+					finalTranscript += event.results[i][0].transcript;
+			}
+
+			// Check if final transcript exists
+			if (finalTranscript) {
+				fullTranscript += finalTranscript + ". ";
+				appendBubble(finalTranscript);
+			}
+		};
+
+		// Append bubble in chat
+		function appendBubble(transcript) {
+			const chat = document.getElementById("chat");
+			const bubble = document.createElement("p");
+			bubble.textContent = transcript;
+			bubble.className = "bubble";
+			chat.appendChild(bubble);
+		}
+
+		// Handle speech recognition error
+		recognition.onerror = function(event) {
+			console.error("Speech Recognition Error:", event.error);
+		};
+
+		// Append elements to the DOM
+		container.appendChild(iframe);
+		wrapDiv.appendChild(stylesheet);
+		wrapDiv.appendChild(container);
+		const videoDiv = document.getElementById("video");
+		videoDiv.appendChild(wrapDiv);
+	})(globalThis);
+</script>
+</html>
