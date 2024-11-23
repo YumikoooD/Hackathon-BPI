@@ -1,0 +1,51 @@
+:root {
+	--background-light: rgb(255, 255, 255);
+	--background-gray: rgb(255, 251, 235);
+	--background-dark: rgb(76, 60, 64);
+}
+
+body {
+	display: flex;
+	justify-content: space-between;
+	padding: 0;
+	margin: 0;
+	background-color: var(--background-dark);
+}
+
+div.video {
+	justify-content: center;
+	align-items: center;
+	width: 50%; /* Half the viewport width */
+	height: 100%;
+	position: fixed; /* Keep it fixed on the screen */
+	left: 0; /* Align to the left edge */
+}
+
+div.chat {
+	width: 50%; /* Half the viewport width */
+	height: 100%;
+	position: fixed; /* Keep it fixed on the screen */
+	overflow-y: auto; /* Enable scrolling if content overflows vertically */
+	right: 0; /* Align to the right edge */
+}
+
+div.chat .left-msg {
+	color: black;
+	background-color: yellow;
+	border-radius: 20%;
+	padding: 10px;
+	left: 0;
+}
+
+div.chat .right-msg {
+	color: black;
+	background-color: var(--background-light);
+	border-radius: 20%;
+	padding: 10px;
+	right: 0;
+}
+
+.chat .logo {
+	width: 20%; /* Set logo size */
+	height: auto; /* Maintain aspect ratio */
+}
