@@ -4,7 +4,6 @@ from selenium import webdriver
 from dotenv import load_dotenv
 from langchain_openai import OpenAI  # type: ignore
 from httpx import Client, AsyncClient
-from selenium import webdriver
 
 load_dotenv()
 LLM_KEY = os.getenv("LLM_KEY")
