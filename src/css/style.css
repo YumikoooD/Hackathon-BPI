@@ -22,8 +22,10 @@ div.video {
 }
 
 div.chat {
-	justify-content: space-between;
 	align-items: center;
+	gap: 5px;
+	display: flex;
+	flex-direction: column;
 	width: 50%; /* Half the viewport width */
 	height: 100%;
 	position: fixed; /* Keep it fixed on the screen */
