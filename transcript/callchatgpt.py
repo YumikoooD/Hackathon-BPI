@@ -1,6 +1,7 @@
 import os
+import cgi
 import json
-from selenium import webdriver
+#from selenium import webdriver
 from dotenv import load_dotenv
 from langchain_openai import OpenAI  # type: ignore
 from httpx import Client, AsyncClient
@@ -103,5 +104,29 @@ def handle_transcript():
 
         for field, value in extracted_data.items():
             print(f"Champ '{field}': {value}")
+            
 
-handle_transcript()
+def handle_cgi_request():
+    # Parse CGI form data
+    form = cgi.FieldStorage()
+
+    # Get the 'data' field from the form
+    data = form.getvalue('data')
+
+    if not data:
+        print("Content-Type: application/json\n")
+        print(json.dumps({"error": "No data received"}))
+        return
+
+    # Process the extracted data
+    extracted_data = extract_information(data)
+
+    # Save the extracted data to a JSON file
+    with open("finalData.json", "w", encoding="utf-8") as f:
+        json.dump(extracted_data, f, ensure_ascii=False, indent=4)
+
+    # Send the extracted data back to the client
+    print("Content-Type: application/json\n")
+    print(json.dumps(extracted_data))
+
+handle_cgi_request()
