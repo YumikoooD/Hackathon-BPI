@@ -12,8 +12,6 @@
 }
 
 a { text-decoration: none !important ; 
-    margin-right: 0.625%;
-    text-align: center;   
 }
 
 .navbar {
@@ -60,7 +58,6 @@ a { text-decoration: none !important ;
 .search_btn {
     margin-right: 10px;
     padding: 2px 10px;
-    margin-left: 300px;
 }
 
 .entretien_btn {
@@ -94,10 +91,13 @@ a { text-decoration: none !important ;
     font-size: 3vw;
     text-align: center;
     margin: 75px auto 2vw;
+    font-weight: 500;
 }
 
 #sec #presentation{
     display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #sec #pres{
@@ -108,13 +108,17 @@ a { text-decoration: none !important ;
 
 #sec #paragraphe{
     text-align: justify;
-    padding: 20px 20px 0 20px;
+    padding: 50px 50px 0 50px;
     width: 100%;
     text-justify: inter-word;
 }
 
 #sec #img{
-    width: 50%;
+    width: auto;
+    height: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #sec #img img{
@@ -123,6 +127,8 @@ a { text-decoration: none !important ;
     width: 40%;
     height: auto;
     border-radius: 30px;
+    opacity: 0;
+    transition: opacity 230ms cubic-bezier(0.1, 0.7, 1.0, 0.1);
 }
 
 #sec #img img:hover{
@@ -135,7 +141,7 @@ a { text-decoration: none !important ;
 }
 
 #bouton{
-    margin: 80px 0 0 0;
+    margin: 30px 0 0 0;
     display: flex;
     justify-content: center;
     align-items: center;
