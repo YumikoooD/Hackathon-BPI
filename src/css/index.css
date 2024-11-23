@@ -1,0 +1,231 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.body { font-family: 'Open sans', sans-serif;
+        background-color: #fffbeb;
+        color: #071a39;
+}
+
+a { text-decoration: none !important ; 
+    margin-right: 0.625%;
+    text-align: center;   
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px;
+    background-color: #fff;
+    justify-content: flex-start;
+    box-shadow: 0px 5px 10px rgb(216, 215, 215);
+}
+
+#img_logo img {
+    max-width: 120px;
+    height: auto;
+    margin-right: 20px;
+    margin-left: 22px;
+}
+
+.navbar ul {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    list-style-type: none;
+}
+
+.logo_title, .navbar ul li a { color: #000000; }
+
+.navbar ul li {
+    position: relative;
+}
+
+.navbar ul li a {
+    padding: 12px;
+    margin: 0 6px;
+}
+
+
+.navbar ul li a:hover {
+    color: #000000;
+    background-color: #FFD400;
+    border-radius: 4px;
+}
+
+.search_btn {
+    margin-right: 10px;
+    padding: 2px 10px;
+    margin-left: 300px;
+}
+
+.entretien_btn {
+    padding: 5px 25px;
+    border-radius: 25px;
+    border: none;
+    border: solid;
+    border-color: #FFD400;
+    background-color: #fff;
+}
+
+.entretien_btn:hover {
+    background-color: #FFD400;
+}
+
+.connect_btn {
+    padding: 5px 25px;
+    border-radius: 25px;
+    margin-right: 20px;
+    background-color: #FFD400;
+    border: none;
+}
+
+#sec{
+    padding-left: 5vw;
+    padding-right: 5vw;
+    min-height: 300px;
+}
+
+#sec #title{
+    font-size: 3vw;
+    text-align: center;
+    margin: 75px auto 2vw;
+}
+
+#sec #presentation{
+    display: flex;
+}
+
+#sec #pres{
+    width: 50%;
+    background-color: white;
+    font-weight: bold;
+}
+
+#sec #paragraphe{
+    text-align: justify;
+    padding: 20px 20px 0 20px;
+    width: 100%;
+    text-justify: inter-word;
+}
+
+#sec #img{
+    width: 50%;
+}
+
+#sec #img img{
+    display: block;
+    margin: 0px auto;
+    width: 40%;
+    height: auto;
+    border-radius: 30px;
+}
+
+#sec #img img:hover{
+    animation: scale2 0.1s forwards;
+}
+
+@keyframes scale2{
+    0%{scale: 1;}
+    100%{scale: 1.1;}
+}
+
+#bouton{
+    margin: 80px 0 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#bouton button{
+    margin: 0px auto 20px;
+    min-width: 18vw;
+    padding: 15px 20px;
+    border-radius: 25px;
+    background-color: #FFD400;
+    border: none;
+}
+
+#bouton button a{
+    font-weight: bold;
+    font-size: 19px;
+    color: black;
+    text-decoration: none;
+}
+
+#bouton button:hover{
+    animation: scale 0.1s forwards;
+}
+
+@keyframes scale{
+    0%{scale: 1;}
+    100%{scale: 1.05;}
+}
+
+#sec2{
+    /* min-height: 600px; tmp */
+    height: auto;
+    padding-bottom: 50px;
+    margin-top: 50px;
+    padding-top: 50px;
+    background-color: #FFD400;
+}
+
+#sec2 h2{
+    margin: 0px auto 30px;
+    text-align: center;
+    width: 100vw;
+}
+
+#sec2 #cartes{
+    margin-top: 25px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+#sec2 .carte{
+    background-color : white;
+    border: solid;
+    border-radius: 20px;
+    padding: 5px 20px;
+    width: 20%;
+    display: flex;
+}
+
+#cartes .carte{
+    position: relative;
+    margin: 10px 10px 0 10px;
+}
+
+#sec2 .carte .carteImg{
+    display: block;
+    max-width:230px;
+    max-height:95px;
+    width: auto;
+    height: auto;
+    height: auto;
+    flex-shrink: 0;
+    padding-right: 15px;
+}
+
+#sec2 .carte .cartetexte{
+    height: auto;
+    border-left: solid rgb(255, 204, 0);
+    padding-left: 10px;
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+}
+
+#sec2 .carte .sousTitre{
+    width: 100%;
+    height: auto;
+    font-weight: bold;
+}
+
+#sec2 .carte .text{
+}
