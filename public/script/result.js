@@ -11,30 +11,31 @@ function parseAndDisplayData(data, containerId) {
 		.join('');
 }
 
-// Fetch the JSON file and display its contents
-function loadAndDisplayJSON() {
-	fetch('finalData.json')
-		.then(response => {
-			if (!response.ok) {
-				throw new Error(`HTTP error! Status: ${response.status}`);
-			}
-			return response.json();
-		})
-		.then(data => {
-			// Display entrepreneur data
-			if (data.entrepreneur) {
-				parseAndDisplayData(data.entrepreneur, 'entrepreneur');
-			}
+// Function to load JSON data from localStorage and display it
+function loadAndDisplayFromLocalStorage() {
+	try {
+		// Get JSON from localStorage
+		const rawData = localStorage.getItem('chatGPTResult');
+		if (!rawData) {
+			throw new Error('No data found in localStorage.');
+		}
 
-			// Display entreprise data
-			if (data.entreprise) {
-				parseAndDisplayData(data.entreprise, 'entreprise');
-			}
-		})
-		.catch(error => {
-			console.error('Erreur lors du chargement du fichier JSON :', error);
-		});
+		// Parse JSON
+		const data = JSON.parse(rawData);
+
+		// Display entrepreneur data
+		if (data.entrepreneur) {
+			parseAndDisplayData(data.entrepreneur, 'entrepreneur');
+		}
+
+		// Display entreprise data
+		if (data.entreprise) {
+			parseAndDisplayData(data.entreprise, 'entreprise');
+		}
+	} catch (error) {
+		console.error('Erreur lors du chargement des données depuis localStorage :', error);
+	}
 }
 
 // Call the function to load and display JSON
-document.addEventListener('DOMContentLoaded', loadAndDisplayJSON);
+document.addEventListener('DOMContentLoaded', loadAndDisplayFromLocalStorage);
