@@ -42,12 +42,7 @@ def extract_information(data):
 
 def handle_transcript():
 
-    data = """
-    Tu m'as demander mon nom, je croyais que tu voulais savoir d'ou je venais mais bon tempis. Je m'appel Jean Michel. Dis moi Jane de quel couleur sont tes yeux ? J'ai longement hesiter a continuer sur mon chemin. finalement je vais céder mon entreprise car je n'ai plus suffisement de fonds pour la faire tourner. Si je continue, je risque la fahite. Mieux vaut m'arreter avant qu'il ne soit trop tard.Je ne sais pas quel status choisir pour mon entreprise.
-    """
-
     driver = webdriver.Chrome()
-
     driver.get("http://localhost:4242")
     data = driver.execute_script("return window.localStorage.getItem('data');")
 
@@ -56,7 +51,7 @@ def handle_transcript():
     else:
         extracted_data = extract_information(data)
 
-        with open("dataset.json", "w", encoding="utf-8") as f:
+        with open("finalData.json", "w", encoding="utf-8") as f:
             json.dump(extracted_data, f, ensure_ascii=False, indent=4)
 
         for field, value in extracted_data.items():
