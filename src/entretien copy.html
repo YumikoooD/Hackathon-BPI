@@ -9,19 +9,19 @@
 </head>
 <body>
 	<div id="video" class="video"></div>
-	<div class="chat">
-		<!-- <p class="left-msg">This is a message</p>
-		<p class="right-msg">This is an other message</p> -->
+	<div id="chat" class="chat">
 	</div>
 </body>
 <script>
 	(function (window) {
+		let transcript = [];
 		const host = "https://labs.heygen.com";
 		const url =
 			host +
 			"/guest/streaming-embed?share=eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJlZjA4MDM5YTQxMzU0ZWQ1YTIwNTY1ZGI4%0D%0AOTkzNzNmMyIsInByZXZpZXdJbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3Yz%0D%0AL2VmMDgwMzlhNDEzNTRlZDVhMjA1NjVkYjg5OTM3M2YzL2Z1bGwvMi4yL3ByZXZpZXdfdGFyZ2V0%0D%0ALndlYnAiLCJuZWVkUmVtb3ZlQmFja2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6IjM1%0D%0AM2EzMDRhZDNlZjQ1NmZiNzk1ZWY0MDkyZDgyMjZlIiwidXNlcm5hbWUiOiI3MjQ5ZmU0MTdiNGQ0%0D%0AODM3ODVkMmZlNmQ2MzBhYjdiZCJ9&inIFrame=1";
 
 			// Initialize SpeechRecognition
+			let recognition;
 		if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
 			recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
 			recognition.continuous = true;
@@ -29,6 +29,7 @@
 			recognition.lang = 'fr-FR';
 		} else {
 			alert("Speech Recognition API is not supported in your browser.");
+			return ;
 		}
 
 		const clientWidth = document.body.clientWidth;
@@ -106,12 +107,17 @@
 					case "hide":
 						visible = false;
 						recognition.stop();
+						// Store the full transcript in localStorage
+						const cleanedTranscript = fullTranscript.trim(); // Remove trailing spaces
+						localStorage.setItem("finalTranscript", cleanedTranscript);
+						console.log("Transcript stored in localStorage:", cleanedTranscript);
 						wrapDiv.classList.toggle("expand", visible);
 						break;
 				}
 			}
 		});
 
+		let fullTranscript = "";
 		// Handle speech recognition results
 		recognition.onresult = function(event) {
 			let interimTranscript = '';
@@ -126,24 +132,25 @@
 			}
 
 			if (finalTranscript) {
-				console.log(finalTranscript);
-				//appendMessage(finalTranscript, 'user'); // Add user's speech to chat
-				//processInterlocutorResponse(finalTranscript); // Trigger interlocutor's response
+				fullTranscript += finalTranscript + "\n";
+				console.log("New transcript:", finalTranscript); // Log the new addition
+				console.log("Complete transcript:", transcript.join(' ')); // Log the full transcript
+				appendBubble(finalTranscript);
 			}
 		};
+
+		function appendBubble(transcript) {
+			const chat = document.getElementById("chat");
+			const bubble = document.createElement("p");
+			bubble.textContent = transcript;
+			bubble.className = "bubble";
+			chat.appendChild(bubble);
+		}
 
 		// Handle speech recognition error
 		recognition.onerror = function(event) {
 			console.error("Speech Recognition Error:", event.error);
 		};
-
-		// Function to simulate interlocutor response using SpeechSynthesis
-		// processInterlocutorResponse(userSpeech) {
-			// Simulating interlocutor's response
-			//const interlocutorText = "I heard you say: " + userSpeech;
-			//console.log(interlocutorText);
-			//appendMessage(interlocutorText, 'interlocutor');
-		}
 
 		// Append elements to the DOM
 		container.appendChild(iframe);
