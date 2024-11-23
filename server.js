@@ -1,37 +1,49 @@
-const express = require('express');
-const { exec } = require('child_process');
-const path = require('path');
-const fs = require('fs');
+// Import necessary modules
+const express = require("express");
+const { exec } = require("child_process");
+const path = require("path");
 
 const app = express();
 const PORT = 4242;
 
-// Serve static files from the 'public' folder
+// Serve static files (CSS, JS, images, etc.) from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Endpoint to execute the Python script
-app.get('/run-script', (req, res) => {
-	const pythonScript = path.join(__dirname, '/transcript/callchatgpt.py');
+// Route to handle /run-python
+app.get("/run-python", (req, res) => {
+  // Command to run a Python script
+  const pythonScript = "python3 ./transcript/callchatgpt.py"; // Replace 'script.py' with your Python script path
 
-	// Execute the Python script
-	exec(`python3 ${pythonScript}`, (error, stdout, stderr) => {
-		if (error) {
-			console.error(`Error executing Python script: ${error.message}`);
-			return res.status(500).send('Error executing Python script.');
-		}
-		if (stderr) {
-			console.error(`Python script error: ${stderr}`);
-			return res.status(500).send('Python script error.');
-		}
+  exec(pythonScript, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error executing Python script: ${error.message}`);
+      return res.status(500).send(`Error: ${error.message}`);
+    }
 
-		console.log(`Python script output:\n${stdout}`);
+    if (stderr) {
+      console.error(`Python script stderr: ${stderr}`);
+      return res.status(500).send(`stderr: ${stderr}`);
+    }
 
-		// Redirect to the result page
-		res.redirect('./src/result.html');
-	});
+    console.log(`Python script stdout: ${stdout}`);
+    res.send(`Python script output: ${stdout}`);
+  });
+});
+
+
+app.get("/", (req, res) => {
+	res.sendFile(path.join(__dirname, "src", "index.html"));
+});
+
+app.get("/entretien", (req, res) => {
+	res.sendFile(path.join(__dirname, "src", "entretien.html"));
+});
+
+app.get("/result", (req, res) => {
+	res.sendFile(path.join(__dirname, "src", "result.html"));
 });
 
 // Start the server
 app.listen(PORT, () => {
-	console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Server is running at http://localhost:${PORT}`);
 });
