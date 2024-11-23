@@ -15,12 +15,13 @@ function parseAndDisplayData(data, containerId) {
 function loadAndDisplayFromLocalStorage() {
 	try {
 		// Get JSON from localStorage
-		const rawData = localStorage.getItem('chatGPTResult');
+		const rawData = sessionStorage.getItem('chatGPTResult');
 		if (!rawData) {
 			throw new Error('No data found in localStorage.');
 		}
 
 		// Parse JSON
+		console.log(rawData);
 		const data = JSON.parse(rawData);
 
 		// Display entrepreneur data

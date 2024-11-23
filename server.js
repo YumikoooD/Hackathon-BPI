@@ -30,6 +30,40 @@ app.get("/run-python", (req, res) => {
   });
 });
 
+app.get("/run-chatgpt", async (req, res) => {
+  try {
+    const openAiUrl = "https://apiv2.cloud.bpifrance.fr/prd/mta/hackathon/llm";
+    const openAiApiKey = "sk-uZfC_9RKabzEeHo1XthBtg"; // Replace securely
+
+    const requestBody = {
+        model: "gpt-4",
+        messages: [
+            { role: "system", content: "You are an assistant that extracts structured data from discussions." },
+            { role: "user", content: req.body.promptInput },
+        ],
+        temperature: 0.5,
+    };
+
+    const response = await fetch(openAiUrl, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${openAiApiKey}`,
+        },
+        body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    res.send(JSON.parse(data.choices[0].message.content)); // Return structured JSON
+  } catch (error) {
+      console.error("Error in API call:", error);
+      return null;
+  }
+})
 
 app.get("/", (req, res) => {
 	res.sendFile(path.join(__dirname, "src", "index.html"));
