@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AssemblyAI Realtime Transcription</title>
+</head>
+<body>
+  <h1>AssemblyAI Realtime Transcription</h1>
+  <button id="start">Start Listening</button>
+  <button id="stop" disabled>Stop Listening</button>
+  <p id="output">Say something...</p>
+
+  <script>
+    let audioStream = null;
+    let mediaRecorder = null;
+    let socket = null;
+
+    const startButton = document.getElementById("start");
+    const stopButton = document.getElementById("stop");
+    const output = document.getElementById("output");
+
+    startButton.addEventListener("click", async () => {
+      try {
+        // Connect to WebSocket server
+        socket = new WebSocket("ws://localhost:8080");
+        
+        socket.onopen = () => console.log("Connected to WebSocket");
+
+        socket.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          if (data.text) {
+            console.log("Transcription:", data.text);
+            output.textContent = `You said: ${data.text}`;
+          }
+        };
+
+        socket.onerror = (err) => console.error("WebSocket error:", err);
+
+        // Start audio recording
+        audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(audioStream, { mimeType: "audio/webm" });
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0 && socket.readyState === WebSocket.OPEN) {
+            socket.send(event.data);
+          }
+        };
+
+        mediaRecorder.start(250); // Send audio data every 250ms
+
+        startButton.disabled = true;
+        stopButton.disabled = false;
+        output.textContent = "Listening...";
+      } catch (error) {
+        console.error("Error starting transcription:", error);
+        output.textContent = "Error: Could not start listening.";
+      }
+    });
+
+    stopButton.addEventListener("click", () => {
+      try {
+        // Stop audio recording
+        if (mediaRecorder && mediaRecorder.state !== "inactive") {
+          mediaRecorder.stop();
+        }
+        // Stop audio stream
+        if (audioStream) {
+          audioStream.getTracks().forEach((track) => track.stop());
+        }
+        // Close WebSocket
+        if (socket && socket.readyState === WebSocket.OPEN) {
+          socket.close();
+        }
+
+        startButton.disabled = false;
+        stopButton.disabled = true;
+        output.textContent = "Stopped listening.";
+      } catch (error) {
+        console.error("Error stopping transcription:", error);
+        output.textContent = "Error: Could not stop listening.";
+      }
+    });
+  </script>
+</body>
+</html>
