@@ -22,18 +22,6 @@ llm = OpenAI(
 )
 
 def extract_information(data):
-    '''prompt = f"""
-    Voici un texte non structuré contenant plusieurs informations :
-    {data}
-
-    Ignore les informations superflues et extrais uniquement les informations nécessaires pour remplir les champs suivants :
-    - Nom et prénom : Nom de la personne.
-    - Intention de l'entrepreneur : Intention de l'entrepreneur (par exemple, gestion, création, cession ou reprise).
-    - Status de l'entreprise : Status de l'entreprise.
-
-    Fournis une réponse sous forme de JSON, avec un champ correspondant à chaque clé demandée.
-    """'''
-
     prompt = f"""Voici une discussion longue et non structurée entre un chargé d'affaires BPI nommé Sofia et un entrepreneur. Cette discussion contient des informations importantes sur le profil de l'entrepreneur et son entreprise. Ignore les informations superflues, répétées ou non pertinentes, et extrais uniquement les informations nécessaires pour compléter les champs suivants dans un fichier JSON structuré.
 
     Le JSON doit être divisé en deux blocs :
@@ -55,25 +43,25 @@ def extract_information(data):
     - `fondation` : Année de fondation de l'entreprise (si mentionnée).
     - `description` : Une brève description de l'entreprise, ses activités principales ou sa mission.
 
-    Fournis le résultat final sous forme de JSON structuré, trié par ordre d'importance :
+    Fournis le résultat final sous forme de JSON structuré, trié par ordre d'importance :
 
     Exemple attendu :
-    {
-    "entrepreneur": {
-        "nom": "Jean Dupont",
-        "age": 45,
-        "intention": "Création",
-        "expertise": "Technologie de l'information",
-        "biographie": "Jean est un entrepreneur innovant dans le secteur des logiciels."
-    },
-    "entreprise": {
-        "nom": "TechVision",
-        "secteur": "Logiciels d'entreprise",
-        "status": "Active",
-        "fondation": 2010,
-        "description": "TechVision développe des solutions logicielles pour les entreprises modernes."
-    }
-    }
+
+        "entrepreneur":
+            "nom": "Jean Dupont",
+            "age": 45,
+            "intention": "Création",
+            "expertise": "Technologie de l'information",
+            "biographie": "Jean est un entrepreneur innovant dans le secteur des logiciels."
+        ,
+        "entreprise":
+            "nom": "TechVision",
+            "secteur": "Logiciels d'entreprise",
+            "status": "Active",
+            "fondation": 2010,
+            "description": "TechVision développe des solutions logicielles pour les entreprises modernes."
+
+
 
     Si une information n’est pas disponible ou déductible, laisse le champ vide ou ne l’inclus pas dans la réponse.
 
@@ -82,23 +70,6 @@ def extract_information(data):
     """
 
     response = llm.invoke(prompt)
-    response = """{
-    "entrepreneur": {
-        "nom": "Jean Dupont",
-        "age": 45,
-        "intention": "Création",
-        "expertise": "Technologie de l'information",
-        "biographie": "Jean est un entrepreneur innovant dans le secteur des logiciels."
-    },
-    "entreprise": {
-        "nom": "TechVision",
-        "secteur": "Logiciels d'entreprise",
-        "status": "Active",
-        "fondation": 2010,
-        "description": "TechVision développe des solutions logicielles pour les entreprises modernes."
-    }
-}"""
-
     print(response)
     try:
         return json.loads(response)
@@ -126,14 +97,14 @@ def handle_transcript():
             print(f"Champ '{field}': {value}")
 
 
-"""def handle_cgi_request():
+def handle_cgi_request():
     # Read the POST data directly from stdin
     content_length = int(os.environ.get('CONTENT_LENGTH', 0))
     post_data = sys.stdin.read(content_length)
-    
+
     # Parse the form data
     form = urllib.parse.parse_qs(post_data)
-    
+
     # Get the 'data' field from the parsed form
     data = form.get('data', [None])[0]
 
@@ -151,26 +122,7 @@ def handle_transcript():
 
     # Send the extracted data back to the client
     print("Content-Type: application/json\n")
-    print(json.dumps(extracted_data))"""
-    
-
-def handle_cgi_request():
-    # Log the environment variables for debugging
-    print("Content-Type: application/json\n")
-    print(json.dumps({"env": dict(os.environ), "message": "Debugging environment"}))
-    
-    # Read POST data
-    content_length = int(os.environ.get('CONTENT_LENGTH', 0))
-    if content_length == 0:
-        print(json.dumps({"error": "CONTENT_LENGTH is 0"}))
-        return
-
-    post_data = sys.stdin.read(content_length)
-    
-    # Debug raw POST data
-    print("Content-Type: application/json\n")
-    print(json.dumps({"post_data": post_data}))
-    return
+    print(json.dumps(extracted_data))
 
 
 handle_cgi_request()
