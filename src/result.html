@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Compte Rendu</title>
+	<link rel="stylesheet" href="css/result.css">
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+	<nav class="navbar">
+		<a href="#">
+			<!-- <h1 class="logo_title">Logo BPI</h1> -->
+			<div id="img_logo">
+				<img src="./assets/logoBPI.png" alt="">
+			</div>
+		</a>
+		<ul>
+			<li><a href="#">Entrepreneur</a></li>
+			<li><a href="#">Conseiller</a></li>
+			<li><a href="#">Enseignant</a></li>
+			<li><a href="#">Observatoire</a></li>
+		</ul>
+		<div class="nav-right">
+			<input type="text" class="search_btn"
+			placeholder="Recherche..." />
+			<button class="entretien_btn" type="button">Je commence mon entretien</button>
+			<button class="connect_btn" type="button">Se connecter</button>
+		</div>
+	</nav>
+	
+	<div class="container">
+		<div class="column">
+			<div class="header">
+				<img src="assets/person_gray.png" alt="Logo Entrepreneur" class="logo">
+				<h2>Entrepreneur</h2>
+			</div>
+			<div id="entrepreneur" class="content">
+				<!-- Les données JSON seront injectées ici -->
+			</div>
+		</div>
+		<div class="column">
+			<div class="header">
+				<img src="assets/lightbulb.png" alt="Logo Entreprise" class="logo">
+				<h2>Entreprise</h2>
+			</div>
+			<div id="entreprise" class="content">
+				<!-- Les données JSON seront injectées ici -->
+			</div>
+		</div>
+	</div>
+	<script src="script/result.js"></script>
+</body>
+</html>
