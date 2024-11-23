@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href="./assets/icon.png" rel="icon" type="image/x-icon">
-	<link href="./css/style.css" rel="stylesheet">
+	<link href="/css/entretien.css" rel="stylesheet">
 	<title>Entretien</title>
 </head>
 <body>
@@ -109,12 +109,22 @@
 						recognition.stop();
 						// Store the full transcript in localStorage
 						const cleanedTranscript = fullTranscript.trim(); // Remove trailing spaces
-						localStorage.setItem("finalTranscript", cleanedTranscript);
+						localStorage.setItem("data", JSON.stringify(cleanedTranscript));
 						wrapDiv.classList.toggle("expand", visible);
+						callPythonScript(cleanedTranscript);
 						break;
 				}
 			}
 		});
+
+		async function callPythonScript(transcript) {
+			try {
+				await fetch("/run-python");
+				window.location.href = '/result';
+			} catch {
+				console.error("error: cannot execute python script");
+			}
+		}
 
 		// Handle speech recognition results
 		recognition.onresult = function(event) {
