@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Chat with Speech Recognition</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f9;
+        }
+        #chat-container {
+            width: 80%;
+            max-width: 600px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-top: 30px;
+            overflow-y: auto;
+            height: 70vh;
+        }
+        .chat-bubble {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+        .user {
+            background-color: #e0f7fa;
+            align-self: flex-start;
+        }
+        .interlocutor {
+            background-color: #f1f8e9;
+            align-self: flex-end;
+        }
+        .chat-bubble span {
+            display: block;
+            font-size: 1.2em;
+        }
+        #inputBtn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #00796b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        #inputBtn:disabled {
+            background-color: #b2dfdb;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h1>Live Speech Chat</h1>
+    <div id="chat-container"></div>
+    <button id="inputBtn">Start Talking</button>
+
+    <script>
+        const chatContainer = document.getElementById('chat-container');
+        const inputBtn = document.getElementById('inputBtn');
+
+        let recognition;
+        let isRecognizing = false;
+
+        // Initialize SpeechRecognition
+        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'fr-FR';
+        } else {
+            alert("Speech Recognition API is not supported in your browser.");
+        }
+
+        // Function to append a new message to the chat
+        function appendMessage(text, speaker = 'user') {
+            const chatBubble = document.createElement('div');
+            chatBubble.classList.add('chat-bubble', speaker);
+            const message = document.createElement('span');
+            message.textContent = text;
+            chatBubble.appendChild(message);
+            chatContainer.appendChild(chatBubble);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Start speech recognition when button is clicked
+        inputBtn.addEventListener('click', () => {
+            if (isRecognizing) {
+                recognition.stop();
+                inputBtn.textContent = "Start Talking";
+            } else {
+                recognition.start();
+                inputBtn.textContent = "Stop Talking";
+            }
+            isRecognizing = !isRecognizing;
+        });
+
+        // Handle speech recognition results
+        recognition.onresult = function(event) {
+            let interimTranscript = '';
+            let finalTranscript = '';
+
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript;
+                } else {
+                    interimTranscript += event.results[i][0].transcript;
+                }
+            }
+
+            if (finalTranscript) {
+                appendMessage(finalTranscript, 'user'); // Add user's speech to chat
+                processInterlocutorResponse(finalTranscript); // Trigger interlocutor's response
+            }
+
+            // Optionally show interim results live
+            if (interimTranscript) {
+                appendMessage(interimTranscript, 'user'); // Optionally display partial recognition
+            }
+        };
+
+        // Handle speech recognition error
+        recognition.onerror = function(event) {
+            console.error("Speech Recognition Error:", event.error);
+        };
+
+        // Function to simulate interlocutor response using SpeechSynthesis
+        function processInterlocutorResponse(userSpeech) {
+            // Simulating interlocutor's response
+            const interlocutorText = "I heard you say: " + userSpeech;
+            appendMessage(interlocutorText, 'interlocutor');
+
+            // Speak the interlocutor's response
+            const utterance = new SpeechSynthesisUtterance(interlocutorText);
+            utterance.lang = 'en-US';
+            window.speechSynthesis.speak(utterance);
+        }
+
+    </script>
+</body>
+</html>
