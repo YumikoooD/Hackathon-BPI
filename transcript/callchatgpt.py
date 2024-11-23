@@ -1,8 +1,10 @@
-from dotenv import load_dotenv
 import os
 import json
+from selenium import webdriver
+from dotenv import load_dotenv
 from langchain_openai import OpenAI  # type: ignore
 from httpx import Client, AsyncClient
+from selenium import webdriver
 
 load_dotenv()
 LLM_KEY = os.getenv("LLM_KEY")
@@ -37,14 +39,27 @@ def extract_information(data):
         print("Réponse brute :", response)
         return {}
 
-data = """
-Tu m'as demander mon nom, je croyais que tu voulais savoir d'ou je venais mais bon tempis. Je m'appel Jean Michel. Dis moi Jane de quel couleur sont tes yeux ? J'ai longement hesiter a continuer sur mon chemin. finalement je vais céder mon entreprise car je n'ai plus suffisement de fonds pour la faire tourner. Si je continue, je risque la fahite. Mieux vaut m'arreter avant qu'il ne soit trop tard.Je ne sais pas quel status choisir pour mon entreprise.
-"""
 
-extracted_data = extract_information(data)
+def handle_transcript():
 
-with open("dataset.json", "w", encoding="utf-8") as f:
-    json.dump(extracted_data, f, ensure_ascii=False, indent=4)
+    data = """
+    Tu m'as demander mon nom, je croyais que tu voulais savoir d'ou je venais mais bon tempis. Je m'appel Jean Michel. Dis moi Jane de quel couleur sont tes yeux ? J'ai longement hesiter a continuer sur mon chemin. finalement je vais céder mon entreprise car je n'ai plus suffisement de fonds pour la faire tourner. Si je continue, je risque la fahite. Mieux vaut m'arreter avant qu'il ne soit trop tard.Je ne sais pas quel status choisir pour mon entreprise.
+    """
 
-for field, value in extracted_data.items():
-    print(f"Champ '{field}': {value}")
+    driver = webdriver.Chrome()
+
+    driver.get("http://localhost:4242")
+    data = driver.execute_script("return window.localStorage.getItem('data');")
+
+    if not data:
+        print("Error: LocalStorage is empty.")
+    else:
+        extracted_data = extract_information(data)
+
+        with open("dataset.json", "w", encoding="utf-8") as f:
+            json.dump(extracted_data, f, ensure_ascii=False, indent=4)
+
+        for field, value in extracted_data.items():
+            print(f"Champ '{field}': {value}")
+
+handle_transcript()
