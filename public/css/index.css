@@ -11,7 +11,7 @@
         color: #071a39;
 }
 
-a { text-decoration: none !important ; 
+a { text-decoration: none !important ;
 }
 
 .navbar {
@@ -198,46 +198,28 @@ a { text-decoration: none !important ;
 }
 
 #sec2 .carte{
-    background-color : white;
-    border: solid;
-    border-radius: 20px;
-    padding: 5px 20px;
-    width: 20%;
-    display: flex;
 }
 
 #cartes .carte{
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
     margin: 10px 10px 0 10px;
 }
 
 #sec2 .carte .carteImg{
-    display: block;
-    max-width:230px;
-    max-height:95px;
+    background-color : white;
+    border: solid;
+    border-radius: 20px;
+    display: flex;
+    max-width: 400px;
+    max-height: auto;
     width: auto;
     height: auto;
     height: auto;
     flex-shrink: 0;
     padding-right: 15px;
-}
-
-#sec2 .carte .cartetexte{
-    height: auto;
-    border-left: solid rgb(255, 204, 0);
-    padding-left: 10px;
-    word-wrap: break-word;
-    word-break: break-word;
-    white-space: normal;
-}
-
-#sec2 .carte .sousTitre{
-    width: 100%;
-    height: auto;
-    font-weight: bold;
-}
-
-#sec2 .carte .text{
 }
 
 .hidden {
