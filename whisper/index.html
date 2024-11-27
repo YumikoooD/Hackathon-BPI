@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Speech API Example</title>
+</head>
+<body>
+  <h1>Web Speech API Example</h1>
+  <button id="start">Start Listening</button>
+  <button id="stop" disabled>Stop Listening</button>
+  <p id="output">Say something...</p>
+
+  <script>
+    // Check for SpeechRecognition support
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Web Speech API is not supported in your browser.");
+      throw new Error("SpeechRecognition not supported in this browser.");
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US"; // Set the language (change to "fr-FR" for French)
+    recognition.continuous = true; // Keep listening until stopped
+    recognition.interimResults = false; // Only display final results
+
+    const startButton = document.getElementById("start");
+    const stopButton = document.getElementById("stop");
+    const output = document.getElementById("output");
+
+    // Event when recognition gets results
+    recognition.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map(result => result[0].transcript)
+        .join("");
+      console.log("Heard:", transcript);
+      output.textContent = `You said: ${transcript}`;
+    };
+
+    // Event when there's an error
+    recognition.onerror = (event) => {
+      console.error("Speech recognition error:", event.error);
+      output.textContent = `Error: ${event.error}`;
+    };
+
+    // Start listening
+    startButton.addEventListener("click", () => {
+      recognition.start();
+      startButton.disabled = true;
+      stopButton.disabled = false;
+      output.textContent = "Listening...";
+    });
+
+    // Stop listening
+    stopButton.addEventListener("click", () => {
+      recognition.stop();
+      startButton.disabled = false;
+      stopButton.disabled = true;
+      output.textContent = "Stopped listening.";
+    });
+  </script>
+</body>
+</html>
